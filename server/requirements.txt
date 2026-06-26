@@ -1,0 +1,16 @@
+# SmArchitect backend — Agent / Policy / IaC planes
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+python-dotenv>=1.0
+
+# LLM gateway — route any task to any of 100+ models behind one OpenAI-compatible API.
+litellm>=1.52
+
+# Agent orchestration (stateful, auditable, human-in-the-loop). Optional at runtime;
+# the pipeline degrades to a deterministic planner when not installed / no API key.
+langgraph>=0.2
+
+# IaC engine — Pulumi Automation API drives preview/up/destroy programmatically.
+# pulumi>=3.140
+# pulumi-aws>=6.0
