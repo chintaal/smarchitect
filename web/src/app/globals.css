@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * SmArchitect design tokens — dark-mode first.
+ * Deep slate/navy base (infrastructure seriousness), electric blue primary (the
+ * "smart"/AI accent), semantic compliance colors, provider accents.
+ */
+@layer base {
+  :root {
+    --background: 222 44% 5%;
+    --foreground: 213 31% 93%;
+
+    --canvas: 220 36% 6.5%;
+
+    --card: 220 32% 8.5%;
+    --card-foreground: 213 31% 93%;
+
+    --popover: 220 32% 9.5%;
+    --popover-foreground: 213 31% 93%;
+
+    --elevated: 218 28% 12%;
+
+    --primary: 213 94% 62%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 216 24% 15%;
+    --secondary-foreground: 213 28% 90%;
+
+    --muted: 218 24% 13%;
+    --muted-foreground: 216 14% 60%;
+
+    --accent: 216 28% 17%;
+    --accent-foreground: 213 31% 93%;
+
+    --destructive: 0 72% 57%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 64% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 95% 55%;
+    --warning-foreground: 30 40% 8%;
+
+    --border: 216 22% 16%;
+    --input: 216 22% 18%;
+    --ring: 213 94% 62%;
+
+    --aws: 33 100% 50%;
+    --azure: 206 100% 42%;
+    --gcp: 217 89% 61%;
+    --k8s: 222 78% 55%;
+
+    --radius: 0.625rem;
+  }
+
+  /* Light theme is supported but the platform is dark-first. */
+  .light {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --canvas: 210 36% 96%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --elevated: 210 40% 99%;
+    --primary: 213 94% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 30% 94%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 16% 42%;
+    --accent: 210 30% 92%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 64% 38%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 45%;
+    --warning-foreground: 0 0% 100%;
+    --border: 214 25% 88%;
+    --input: 214 25% 86%;
+    --ring: 213 94% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+  .glass {
+    background: hsl(var(--card) / 0.72);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .gradient-text {
+    background: linear-gradient(120deg, hsl(var(--foreground)), hsl(var(--primary)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .ring-focus {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * React Flow theming — match the dark canvas plane.
+ * ------------------------------------------------------------------------- */
+.react-flow {
+  --xy-edge-stroke-default: hsl(var(--muted-foreground) / 0.55);
+  --xy-edge-stroke-selected-default: hsl(var(--primary));
+  --xy-connectionline-stroke-default: hsl(var(--primary));
+  --xy-attribution-background-color-default: transparent;
+  background: hsl(var(--canvas));
+}
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__handle {
+  width: 9px;
+  height: 9px;
+  background: hsl(var(--canvas));
+  border: 1.5px solid hsl(var(--muted-foreground) / 0.7);
+  transition: all 0.12s ease;
+}
+.react-flow__handle:hover {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.18);
+}
+.react-flow__handle.connectionindicator:hover {
+  cursor: crosshair;
+}
+.react-flow__node {
+  font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+}
+.react-flow__edge-path {
+  stroke-width: 1.75;
+}
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:focus .react-flow__edge-path {
+  stroke-width: 2.25;
+}
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 6;
+  animation: dash 0.6s linear infinite;
+}
+.react-flow__controls {
+  box-shadow: var(--shadow-panel, 0 12px 32px -12px rgba(0, 0, 0, 0.6));
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+}
+.react-flow__controls-button {
+  background: hsl(var(--card));
+  border-bottom: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  width: 30px;
+  height: 30px;
+}
+.react-flow__controls-button:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--foreground));
+}
+.react-flow__controls-button svg {
+  fill: currentColor;
+  max-width: 13px;
+  max-height: 13px;
+}
+.react-flow__minimap {
+  background: hsl(var(--card) / 0.85) !important;
+  border: 1px solid hsl(var(--border));
+  border-radius: 10px;
+  overflow: hidden;
+}
+.react-flow__minimap-mask {
+  fill: hsl(var(--background) / 0.6);
+}
+.react-flow__node-toolbar {
+  z-index: 50;
+}
+.react-flow__edge.edge-invalid .react-flow__edge-path {
+  stroke: hsl(var(--destructive)) !important;
+  stroke-dasharray: 4 3;
+}
+
+/* cmdk */
+[cmdk-group-heading] {
+  @apply px-2 py-1.5 text-xs font-medium text-muted-foreground;
+}
