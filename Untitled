@@ -1,0 +1,220 @@
+# ROLE
+You are a senior systems/security researcher and journal editor specializing in 
+cloud architecture, Zero Trust, and agentic AI systems. You have read the 
+SmArchitect codebase and platform plan. Your task is to produce a complete, 
+publication-ready **research paper plan** — not the paper itself — for a 
+Q1 journal submission.
+
+# PROJECT CONTEXT (ground truth — do not invent features we don't have)
+
+**SmArchitect** is an AI-native cloud architecture platform with five planes:
+
+1. **Canvas** — React Flow editor; provider-agnostic Cloud Resource Graph (CRG)
+2. **Agent** — LangGraph-style pipeline: Requirements → Research → Architect → 
+   Cost → Security → Compliance → IaC (LiteLLM gateway, human checkpoints)
+3. **Graph** — CRG as single source of truth: nodes = resources (security, cost, 
+   HA, scaling attrs); edges = network/data/control flows (sensitivity flags)
+4. **Policy** — NIST SP 800-207 / 800-207A Zero Trust controls (ZT-1…ZT-8), 
+   HIPAA/SOC2/PCI overlays, evidence + one-click remediation
+5. **IaC** — Export to Pulumi/Terraform/Helm/CloudFormation; import from live 
+   cloud + Terraform state with drift detection
+
+**Existing implementation facts** (cite these in the plan):
+- CRG type system: `ResourceNode.security` = {authRequired, encryptionInTransit, 
+  encryptionAtRest, publicAccess, mtls, wafEnabled, privateNetworking}
+- Compliance engine: graph predicates over nodes/edges → pass/partial/fail + score
+- Cost model: catalog baseline × HA factor (1.0/1.6/2.4/3.0) × scaling units
+- Agent pipeline: LLM narrative + **deterministic planner** as structured tool 
+  (templates: three-tier, serverless; talk-to-edit via regex mutations)
+- Multi-cloud comparison: AWS/Azure/GCP/private cost indexing
+
+**Gap to close for the paper** (must be planned AND implemented):
+Current compliance/cost logic is heuristic. The paper's contribution is a 
+**formal mathematical framework** implemented on top of CRG, not hand-wavy claims.
+
+# RESEARCH THESIS (propose and defend one primary thesis)
+
+Propose ONE central thesis of the form:
+
+> "Cloud architectures can be synthesized, optimized, and verified as 
+> **constrained multi-objective graph problems** over a unified CRG, where 
+> Zero Trust compliance is a **formally defined satisfaction function**, and 
+> agentic LLM pipelines act as **human-in-the-loop search operators** over 
+> that formal space — yielding Pareto-optimal, auditable, deployable designs."
+
+Argue why this is novel vs. prior work in:
+- Cloud architecture recommendation (e.g., expert systems, TOGAF tools)
+- Zero Trust maturity models (qualitative checklists, not graph-verifiable)
+- LLM-for-IaC (Copilot, etc. — no formal compliance/cost optimization)
+- Multi-objective cloud placement (VM/container scheduling — different abstraction level)
+
+# TARGET VENUE
+
+Recommend ONE primary Q1 journal (with impact factor band) and ONE backup. 
+Prefer venues where **formal methods + systems + security** intersect:
+- IEEE TDSC, IEEE TCC, ACM TOIT, Computers & Security, Future Generation 
+  Computer Systems, Journal of Cloud Computing.
+
+Justify fit: novelty, evaluation rigor expected, typical page limit, open-access 
+policy.
+
+# MATHEMATICAL FORMALISM (mandatory — full LaTeX-style definitions)
+
+Define and derive ALL of the following. Show how each maps to existing CRG 
+fields and what new code must be written:
+
+## 1. Cloud Resource Graph
+- G = (V, E, Φ_V, Φ_E) where Φ_V assigns security/cost/HA attributes
+- Edge kinds: network / data / control with sensitivity s(e) ∈ {0,1}
+- Attack surface metric A(G) based on public exposure paths
+- Trust boundary function τ: V → {untrusted, dmz, trusted}
+
+## 2. Zero Trust Satisfaction Function (implementable)
+- Control set C = {c_1,…,c_8} aligned to ZT-1…ZT-8
+- Each c_i: G → {0, 0.5, 1} (fail/partial/pass) — prove equivalence to 
+  current `evaluateFramework()` scoring
+- Aggregate ZT score: S_ZT(G) = Σ w_i · c_i(G) with weights from NIST tenet 
+  criticality (justify weights)
+- **Remediating transform** R_c: G → G' such that c_i(G') = 1; define as 
+  minimum-cost patch (graph edit distance)
+
+## 3. Multi-Objective Optimization Problem
+Minimize vector F(G) = (C(G), -S_ZT(G), -R(G), A(G)) subject to:
+- Budget: C(G) ≤ B
+- Hard constraints: HIPAA/PCI if tagged
+- Structural validity: connected ingress→compute→data paths
+- Deployability: every node maps to IaC resource
+
+Formulate as:
+- (a) Weighted scalarization with λ tuning, OR
+- (b) ε-constraint method, OR  
+- (c) Mixed-integer linear program (MILP) if you can linearize cost/security
+
+Show Pareto frontier computation. Define what "optimal secure cloud system" 
+means formally: non-dominated architectures on (cost, ZT-score, availability).
+
+## 4. Agentic Pipeline as Formal Search
+- State space: (G, spec, stage) where stage ∈ agent pipeline
+- Actions: {generate_template, apply_patch, remediate_control, recompute_cost}
+- LLM agents = stochastic proposal operators; deterministic planner = 
+  feasibility projector Π(G) → G_valid
+- Human checkpoint = approval filter on state transitions
+- Prove or argue: pipeline converges to feasible G with monotonically 
+  non-decreasing S_ZT under remediate-all policy
+
+# PAPER STRUCTURE (section-by-section outline)
+
+For each section provide: title, 3–5 bullet content points, key equations, 
+figure/table placeholders, and **what code in SmArchitect implements it**.
+
+1. **Abstract** (150–250 words template)
+2. **Introduction** — problem, gap, contributions (numbered list, 4 items max)
+3. **Related Work** — 3 subsections with comparison table
+4. **Background** — CRG, NIST 800-207 mapping, agent pipeline overview
+5. **Formal Model** — all math from above
+6. **System Architecture** — five planes diagram (reference actual stack)
+7. **Algorithms** — optimization + remediation + agent orchestration pseudocode
+8. **Implementation** — what exists vs. what you will add (file paths, modules)
+9. **Evaluation** — experiments (see below)
+10. **Discussion** — limitations, threats to validity
+11. **Conclusion**
+
+# FIGURES AND TABLES (minimum 8, all tied to real artifacts)
+
+Plan each figure with: caption draft, data source, how to generate from SmArchitect.
+
+Required figures:
+1. CRG schema + example three-tier architecture (from `planner.py` template)
+2. Five-plane system architecture (from platform plan)
+3. Zero Trust control evaluation flow (ZT-1…ZT-8 on a sample graph)
+4. Multi-objective Pareto frontier (cost vs. ZT-score, 20+ architectures)
+5. Agent pipeline state machine (LangGraph stages + checkpoints)
+6. Before/after remediation graph diff (compliance lens)
+7. Provider comparison bar chart (AWS/Azure/GCP from `compareProviders()`)
+8. Evaluation metrics table (precision/recall of ZT controls vs. manual audit)
+
+Required tables:
+- Notation table (all symbols)
+- Related work comparison (≥10 papers)
+- Control-to-CRG-field mapping (ZT-1…ZT-8)
+- Experiment configurations (workloads, budgets, compliance tags)
+
+# EVALUATION PLAN (real data only — no synthetic claims without running code)
+
+Design experiments that can actually be run on SmArchitect:
+
+**Dataset:**
+- ≥5 architecture templates (three-tier, serverless, microservices, data 
+  pipeline, multi-region DR) — generate from prompts via `generate_from_prompt()`
+- ≥3 compliance overlays (Zero Trust, HIPAA, PCI)
+- Import ≥1 real Terraform state or mock inventory graph
+
+**Metrics:**
+- ZT compliance score before/after automated remediation
+- Cost delta of remediation (ΔC)
+- Pareto hypervolume for multi-objective search
+- Agent pipeline: time-to-feasible-architecture, # human checkpoints
+- IaC deployability: % of generated Terraform that passes `terraform validate`
+- Talk-to-edit: instruction success rate on 20 canonical commands
+
+**Baselines:**
+- Manual architect design (expert baseline)
+- Template-only (no optimization)
+- LLM-only (no deterministic planner / no formal ZT)
+- Heuristic remediation (current one-click fix) vs. optimal remediation (MILP)
+
+**Statistical rigor:**
+- Report mean ± 95% CI over ≥30 runs where stochastic (LLM)
+- Significance tests where comparing methods
+
+# IMPLEMENTATION ROADMAP (sync with codebase)
+
+List exact modules to implement for the math (with proposed file paths):
+
+| Component | New/Extend | Path |
+|-----------|-----------|------|
+| ZT formal score | extend | `web/src/lib/crg/compliance/` + `server/app/compliance.py` |
+| Attack surface A(G) | new | `web/src/lib/crg/security/attack-surface.ts` |
+| MILP/Pareto optimizer | new | `server/app/optimizer.py` |
+| Remediation optimizer | extend | remediate functions in `zero-trust.ts` |
+| Experiment runner | new | `server/app/experiments/` or `scripts/eval/` |
+| Results export | new | JSON/CSV for paper plots |
+
+Specify dependencies (e.g., `pulp`, `networkx`, `matplotlib`) and how results 
+feed into paper figures.
+
+# AGENTIC CONTRIBUTION (must be first-class, not appendix)
+
+Dedicated subsection on:
+- Why LLM + deterministic planner = **neuro-symbolic architecture synthesis**
+- Model routing via LiteLLM (cost/latency trade-offs per agent stage)
+- Human-in-the-loop as formal constraint on search
+- Failure modes: hallucinated resources caught by CRG validation
+- Ablation: pipeline with/without Security Critic and Compliance Agent stages
+
+# WRITING CONSTRAINTS
+
+- Tone: precise, academic, no marketing language
+- Every claim traceable to equation, experiment, or code reference
+- No fabricated user studies or production deployment stats
+- Acknowledge auth is out of scope; focus on architecture-time security
+- Limitations: catalog-based cost (not live pricing API), deterministic 
+  planner scope, LLM non-determinism
+
+# DELIVERABLE FORMAT
+
+Output the plan as:
+
+1. **Working title** (≤12 words) + 3 alternative titles
+2. **One-paragraph elevator pitch**
+3. **Contribution bullets** (4, each ≤25 words)
+4. **Full section outline** (as above)
+5. **Mathematical appendix outline** (all definitions)
+6. **Figure/table list** with generation instructions
+7. **Evaluation protocol** (step-by-step, runnable)
+8. **Implementation sprint plan** (4 weeks, day-by-day milestones)
+9. **Related work seed bibliography** (15 papers with 1-line relevance each)
+10. **Risk register** — what could get rejected and mitigations
+
+Do NOT write the full paper. Do NOT hallucinate experimental results. 
+DO specify exactly what to implement and run before writing each section.

@@ -1,0 +1,5 @@
+# Pandoc metadata for non-PDF outputs (HTML/DOCX/MD/...).
+# Title and authors are read from main.tex; this only tunes citation rendering.
+link-citations: true
+reference-section-title: "References"
+lang: en-US
