@@ -58,3 +58,16 @@ Numbers come from the platform's experiment harness (see the paper plan,
 `~/.claude/plans/...`): `experiments/run.py` → `results/*.csv` →
 `experiments/plots.py` regenerates the figures/tables. Replace each `\result{…}`
 with the corresponding value; no figure should exist without a generating script.
+
+## Humanizer (optional)
+De-AI prose in `main.tex` without touching LaTeX commands, math, or citations:
+
+```bash
+cd paper
+python humanize.py --input main.tex --output build/main-humanized.tex --report
+python humanize.py --input main.tex --analyze          # coherence report only
+python -m humanizer --input main.tex --llm --report    # + LLM pass if configured
+```
+
+Set `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `HUMANIZER_USE_OLLAMA=1` for the
+LLM pass. Output goes to `build/`; **`main.tex` is never modified.**
