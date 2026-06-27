@@ -1,0 +1,9 @@
+# Humanizer dependencies. All passes except the two below run on the stdlib alone.
+#
+#   pip install -r humanizer/requirements.txt
+#
+# Optional — only needed for `--numbers` (the thousands-separator / file-size pass).
+humanize>=4.0
+
+# The LLM pass needs no SDK: it calls OpenAI / Anthropic / Ollama over plain HTTP via
+# urllib. Just set OPENAI_API_KEY, ANTHROPIC_API_KEY, or HUMANIZER_USE_OLLAMA=1.

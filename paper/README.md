@@ -60,14 +60,34 @@ Numbers come from the platform's experiment harness (see the paper plan,
 with the corresponding value; no figure should exist without a generating script.
 
 ## Humanizer (optional)
-De-AI prose in `main.tex` without touching LaTeX commands, math, or citations:
+De-AI prose in `main.tex` without touching LaTeX commands, math, or citations. The
+pipeline runs in stages — each is independent and LaTeX-safe:
+
+1. **Dictionary** — swaps ~200 AI buzzwords/phrases for plain alternatives (delve→examine,
+   leverage→use, "it is important to note"→"note").
+2. **Contractions** — *casual register only* (you'll, it's, don't). Off for academic prose.
+3. **Numbers** — *opt-in* via the [`humanize`](https://pypi.org/project/humanize/) library:
+   `1234567` → `1,234,567`.
+4. **LLM rewrite** — *opt-in*. A register-aware prompt rewrites paragraph-by-paragraph
+   (separate API calls), then a **burstiness feedback loop** measures sentence-length
+   variance and re-rewrites until the rhythm reads human.
+
+It also scores the prose: a composite **AI-likelihood** (0 = human … 1 = AI) built from
+burstiness, lexical diversity, passive-voice ratio, transition density, and buzzword count.
 
 ```bash
 cd paper
-python humanize.py --input main.tex --output build/main-humanized.tex --report
-python humanize.py --input main.tex --analyze          # coherence report only
-python -m humanizer --input main.tex --llm --report    # + LLM pass if configured
+python -m humanizer --input main.tex --output build/main-humanized.tex --report
+python -m humanizer --input main.tex --analyze            # metrics/coherence only
+python -m humanizer --input main.tex --numbers --report   # + thousands separators
+python -m humanizer --input main.tex --llm --report       # + LLM rewrite loop
+python -m humanizer --text "It is worth noting..." --register casual --llm
+# shortcut: python humanize_paper.py ...   (same flags)
 ```
 
-Set `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `HUMANIZER_USE_OLLAMA=1` for the
-LLM pass. Output goes to `build/`; **`main.tex` is never modified.**
+Install the optional deps with `pip install -r humanizer/requirements.txt` (only
+`humanize`, needed for `--numbers`). For the `--llm` pass set `OPENAI_API_KEY`,
+`ANTHROPIC_API_KEY`, or `HUMANIZER_USE_OLLAMA=1` — no SDK required (plain HTTP). Useful
+flags: `--register {academic,casual}`, `--provider`, `--model`, `--target-burstiness`,
+`--max-iterations`, `--no-per-paragraph`. Output goes to `build/`; **`main.tex` is never
+modified.**
